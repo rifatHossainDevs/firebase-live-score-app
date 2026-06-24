@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_live_score_app/models/football_match.dart';
 import 'package:firebase_live_score_app/screens/add_new_match.dart';
 import 'package:firebase_live_score_app/utils/show_snackbar_message.dart';
@@ -131,7 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       floatingActionButton: FloatingActionButton(
         onPressed: _onTabAddNewMatch,
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.purple,
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
         child: Icon(Icons.add, size: 28),
@@ -178,6 +179,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _onLogoutPressed() async {
+    FirebaseCrashlytics.instance.log("on tap logout button on home screen");
+    throw Exception("My custom exception");
     try {
       await FirebaseAuth.instance.signOut();
       showSnackBarMessage(context, "Logout success");
