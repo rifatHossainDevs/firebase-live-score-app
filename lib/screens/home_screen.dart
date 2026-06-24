@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_live_score_app/models/football_match.dart';
@@ -44,6 +45,15 @@ class _HomeScreenState extends State<HomeScreen> {
     _isFootballMatchInProgress = false;
     setState(() {});
   }*/
+
+  @override
+  void initState() {
+    super.initState();
+    FirebaseAnalytics.instance.setUserId(
+      id: FirebaseAuth.instance.currentUser?.uid,
+    );
+    FirebaseAnalytics.instance.logEvent(name: "Home Screen");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -175,6 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _onDismissed(String docId) {
+    FirebaseAnalytics.instance.logEvent(name: "Deleted match");
     FirebaseFirestore.instance.collection('football').doc(docId).delete();
   }
 
