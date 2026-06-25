@@ -3,7 +3,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_live_score_app/models/football_match.dart';
-import 'package:firebase_live_score_app/screens/add_new_match.dart';
+import 'package:firebase_live_score_app/screens/add_and_update_match.dart';
 import 'package:firebase_live_score_app/utils/show_snackbar_message.dart';
 import 'package:flutter/material.dart';
 
@@ -101,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                            AddNewMatch(matchId: footballMatch.id),
+                            AddAndUpdateMatch(matchId: footballMatch.id),
                       ),
                     );
                   },
@@ -180,7 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => AddNewMatch(matchId: "")),
+      MaterialPageRoute(builder: (context) => AddAndUpdateMatch(matchId: "")),
     );
   }
 
@@ -191,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _onLogoutPressed() async {
     FirebaseCrashlytics.instance.log("on tap logout button on home screen");
-    throw Exception("My custom exception");
+    ///throw Exception("My custom exception");
     try {
       await FirebaseAuth.instance.signOut();
       showSnackBarMessage(context, "Logout success");

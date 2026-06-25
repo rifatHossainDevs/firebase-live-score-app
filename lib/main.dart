@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_live_score_app/fcm_utils.dart';
 import 'package:firebase_live_score_app/screens/home_screen.dart';
 import 'package:firebase_live_score_app/screens/sign_in_screen.dart';
 import 'package:firebase_live_score_app/screens/sign_up_screen.dart';
@@ -21,6 +22,11 @@ Future<void> main() async {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
   };
+
+  await FcmUtils.initialized();
+  await FcmUtils.getFcmToken();
+  print(await FcmUtils.getFcmToken());
+  FcmUtils.onRefreshToken();
 
   runApp(const LiveScoreApp());
 }

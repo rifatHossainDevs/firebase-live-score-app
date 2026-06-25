@@ -5,16 +5,16 @@ import 'package:firebase_live_score_app/utils/show_snackbar_message.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class AddNewMatch extends StatefulWidget {
+class AddAndUpdateMatch extends StatefulWidget {
   final String matchId;
 
-  const AddNewMatch({super.key, required this.matchId});
+  const AddAndUpdateMatch({super.key, required this.matchId});
 
   @override
-  State<AddNewMatch> createState() => _AddNewMatchState();
+  State<AddAndUpdateMatch> createState() => _AddAndUpdateMatchState();
 }
 
-class _AddNewMatchState extends State<AddNewMatch> {
+class _AddAndUpdateMatchState extends State<AddAndUpdateMatch> {
   final TextEditingController _team1NameTEController = TextEditingController();
   final TextEditingController _team2NameTEController = TextEditingController();
   final TextEditingController _team1ScoreTEController = TextEditingController();
@@ -31,7 +31,7 @@ class _AddNewMatchState extends State<AddNewMatch> {
     super.initState();
     hasMatchId = widget.matchId.isNotEmpty;
     if (hasMatchId) {
-      _getMatchDetails();
+      _getAndSetMatchDetails();
     }
   }
 
@@ -162,6 +162,7 @@ class _AddNewMatchState extends State<AddNewMatch> {
               ///IsRunningStatus
               DropdownButtonFormField<bool>(
                 initialValue: selectedIsRunning,
+                hint: Text("Is Running?"),
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -300,7 +301,7 @@ class _AddNewMatchState extends State<AddNewMatch> {
     }
   }
 
-  Future<void> _getMatchDetails() async {
+  Future<void> _getAndSetMatchDetails() async {
     try {
       DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
           .instance
