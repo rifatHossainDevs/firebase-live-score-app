@@ -69,6 +69,8 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.purple,
         title: Text("Home", style: TextStyle(color: Colors.white)),
         actions: [
+          /// For Flutter Local notification.when i click this button
+          /// then, notification will appear
           IconButton(
             onPressed: () {
               NotificationService.instance.showNotification(
