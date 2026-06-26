@@ -12,7 +12,8 @@ class AddAndUpdateMatchScreen extends StatefulWidget {
   const AddAndUpdateMatchScreen({super.key, required this.matchId});
 
   @override
-  State<AddAndUpdateMatchScreen> createState() => _AddAndUpdateMatchScreenState();
+  State<AddAndUpdateMatchScreen> createState() =>
+      _AddAndUpdateMatchScreenState();
 }
 
 class _AddAndUpdateMatchScreenState extends State<AddAndUpdateMatchScreen> {
