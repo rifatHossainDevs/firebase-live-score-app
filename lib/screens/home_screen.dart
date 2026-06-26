@@ -3,7 +3,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_live_score_app/models/football_match.dart';
-import 'package:firebase_live_score_app/screens/add_and_update_match.dart';
+import 'package:firebase_live_score_app/screens/add_and_update_match_screen.dart';
 import 'package:firebase_live_score_app/utils/show_snackbar_message.dart';
 import 'package:flutter/material.dart';
 
@@ -52,6 +52,11 @@ class _HomeScreenState extends State<HomeScreen> {
     FirebaseAnalytics.instance.setUserId(
       id: FirebaseAuth.instance.currentUser?.uid,
     );
+    /*NotificationService.instance.showNotification(
+      id: 1,
+      title: "Hello",
+      body: "Welcome! to ths Live Score App",
+    );*/
     FirebaseAnalytics.instance.logEvent(name: "Home Screen");
   }
 
@@ -62,6 +67,10 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.purple,
         title: Text("Home", style: TextStyle(color: Colors.white)),
         actions: [
+          IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.notifications, color: Colors.white),
+          ),
           IconButton(
             onPressed: _onLogoutPressed,
             icon: Icon(Icons.logout, color: Colors.white),
@@ -101,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                            AddAndUpdateMatch(matchId: footballMatch.id),
+                            AddAndUpdateMatchScreen(matchId: footballMatch.id),
                       ),
                     );
                   },
@@ -122,7 +131,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           "${footballMatch.team1Name} vs ${footballMatch.team2Name}",
                         ),
                         subtitle: Text(
-                          "Winner Team: ${footballMatch.winnerTeam}",
+                          footballMatch.isRunning
+                              ? "Match in progress..."
+                              : "Winner Team: ${footballMatch.winnerTeam}",
                         ),
                         trailing: Text(
                           "${footballMatch.team1Score} - ${footballMatch.team2Score}",
@@ -180,7 +191,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => AddAndUpdateMatch(matchId: "")),
+      MaterialPageRoute(
+        builder: (context) => AddAndUpdateMatchScreen(matchId: ""),
+      ),
     );
   }
 
@@ -191,6 +204,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _onLogoutPressed() async {
     FirebaseCrashlytics.instance.log("on tap logout button on home screen");
+
     ///throw Exception("My custom exception");
     try {
       await FirebaseAuth.instance.signOut();

@@ -1,20 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_live_score_app/models/football_match.dart';
-import 'package:firebase_live_score_app/screens/home_screen.dart';
 import 'package:firebase_live_score_app/utils/show_snackbar_message.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class AddAndUpdateMatch extends StatefulWidget {
+import '../utils/notification_service.dart';
+
+class AddAndUpdateMatchScreen extends StatefulWidget {
   final String matchId;
 
-  const AddAndUpdateMatch({super.key, required this.matchId});
+  const AddAndUpdateMatchScreen({super.key, required this.matchId});
 
   @override
-  State<AddAndUpdateMatch> createState() => _AddAndUpdateMatchState();
+  State<AddAndUpdateMatchScreen> createState() => _AddAndUpdateMatchScreenState();
 }
 
-class _AddAndUpdateMatchState extends State<AddAndUpdateMatch> {
+class _AddAndUpdateMatchScreenState extends State<AddAndUpdateMatchScreen> {
   final TextEditingController _team1NameTEController = TextEditingController();
   final TextEditingController _team2NameTEController = TextEditingController();
   final TextEditingController _team1ScoreTEController = TextEditingController();
@@ -29,6 +30,12 @@ class _AddAndUpdateMatchState extends State<AddAndUpdateMatch> {
   @override
   void initState() {
     super.initState();
+
+    NotificationService.instance.showNotification(
+      id: 2,
+      title: "add or update match",
+      body: "add or update whatever you want",
+    );
     hasMatchId = widget.matchId.isNotEmpty;
     if (hasMatchId) {
       _getAndSetMatchDetails();
@@ -37,6 +44,7 @@ class _AddAndUpdateMatchState extends State<AddAndUpdateMatch> {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -96,68 +104,83 @@ class _AddAndUpdateMatchState extends State<AddAndUpdateMatch> {
                 },
               ),
 
-              ///Team1 Score
-              TextFormField(
-                keyboardType: TextInputType.number,
-                controller: _team1ScoreTEController,
-                decoration: InputDecoration(
-                  hintText: "Enter Team1 Score",
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+              ///Team Score Row
+              Visibility(
+                visible: hasMatchId,
+                child: Row(
+                  children: [
+                    ///Team1 Score
+                    SizedBox(
+                      width: (width - 40) / 2,
+                      child: TextFormField(
+                        keyboardType: TextInputType.number,
+                        controller: _team1ScoreTEController,
+                        decoration: InputDecoration(
+                          hintText: "Enter Team1 Score",
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Must enter team1 score";
+                          }
+
+                          if (int.tryParse(value) == null) {
+                            return "Enter valid number";
+                          }
+
+                          return null;
+                        },
+                      ),
+                    ),
+                    SizedBox(width: 8),
+
+                    ///Team2 Score
+                    SizedBox(
+                      width: (width - 40) / 2,
+                      child: TextFormField(
+                        keyboardType: TextInputType.number,
+                        controller: _team2ScoreTEController,
+                        decoration: InputDecoration(
+                          hintText: "Enter Team2 Score",
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Must enter team2 score";
+                          }
+
+                          if (int.tryParse(value) == null) {
+                            return "Enter valid number";
+                          }
+
+                          return null;
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Must enter team1 score";
-                  }
-
-                  if (int.tryParse(value) == null) {
-                    return "Enter valid number";
-                  }
-
-                  return null;
-                },
-              ),
-
-              ///Team2 Score
-              TextFormField(
-                keyboardType: TextInputType.number,
-                controller: _team2ScoreTEController,
-                decoration: InputDecoration(
-                  hintText: "Enter Team2 Score",
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Must enter team2 score";
-                  }
-
-                  if (int.tryParse(value) == null) {
-                    return "Enter valid number";
-                  }
-
-                  return null;
-                },
               ),
 
               ///Winning Team
-              TextFormField(
-                keyboardType: TextInputType.text,
-                controller: _winnerTeamTEController,
-                decoration: InputDecoration(
-                  hintText: "Enter winner Name",
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
+              // TextFormField(
+              //   keyboardType: TextInputType.text,
+              //   controller: _winnerTeamTEController,
+              //   decoration: InputDecoration(
+              //     hintText: "Enter winner Name",
+              //     border: OutlineInputBorder(
+              //       borderSide: BorderSide(color: Colors.grey),
+              //       borderRadius: BorderRadius.circular(10),
+              //     ),
+              //   ),
+              // ),
 
               ///IsRunningStatus
               DropdownButtonFormField<bool>(
@@ -219,9 +242,19 @@ class _AddAndUpdateMatchState extends State<AddAndUpdateMatch> {
     String team2Name = _team2NameTEController.text.trim();
     int team1Score = int.tryParse(_team1ScoreTEController.text.trim()) ?? 0;
     int team2Score = int.tryParse(_team2ScoreTEController.text.trim()) ?? 0;
-    String? winnerTeam = _winnerTeamTEController.text.trim().isEmpty
-        ? ""
-        : _winnerTeamTEController.text.trim();
+    // String? winnerTeam = _winnerTeamTEController.text.trim().isEmpty
+    //     ? ""
+    //     : _winnerTeamTEController.text.trim();
+
+    late String? winnerTeam;
+
+    if (team1Score == team2Score) {
+      winnerTeam = "Draw";
+    } else if (team1Score > team2Score) {
+      winnerTeam = team1Name;
+    } else {
+      winnerTeam = team2Name;
+    }
 
     FootballMatch footballMatch = FootballMatch(
       id: "${team1Name.substring(0, 3)}vs${team2Name.substring(0, 3)}${DateTime.now().millisecondsSinceEpoch.toString()}",
@@ -269,9 +302,19 @@ class _AddAndUpdateMatchState extends State<AddAndUpdateMatch> {
     String team2Name = _team2NameTEController.text.trim();
     int team1Score = int.tryParse(_team1ScoreTEController.text.trim()) ?? 0;
     int team2Score = int.tryParse(_team2ScoreTEController.text.trim()) ?? 0;
-    String? winnerTeam = _winnerTeamTEController.text.trim().isEmpty
-        ? ""
-        : _winnerTeamTEController.text.trim();
+    // String? winnerTeam = _winnerTeamTEController.text.trim().isEmpty
+    //     ? ""
+    //     : _winnerTeamTEController.text.trim();
+
+    late String? winnerTeam;
+
+    if (team1Score == team2Score) {
+      winnerTeam = "Draw";
+    } else if (team1Score > team2Score) {
+      winnerTeam = team1Name;
+    } else {
+      winnerTeam = team2Name;
+    }
 
     FootballMatch footballMatch = FootballMatch(
       id: widget.matchId,
