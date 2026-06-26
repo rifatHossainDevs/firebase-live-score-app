@@ -7,6 +7,8 @@ import 'package:firebase_live_score_app/screens/add_and_update_match_screen.dart
 import 'package:firebase_live_score_app/utils/show_snackbar_message.dart';
 import 'package:flutter/material.dart';
 
+import '../utils/notification_service.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -68,7 +70,13 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Text("Home", style: TextStyle(color: Colors.white)),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              NotificationService.instance.showNotification(
+                id: 3,
+                title: "Hello!",
+                body: "Notification Icon Clicked",
+              );
+            },
             icon: Icon(Icons.notifications, color: Colors.white),
           ),
           IconButton(
